@@ -120,6 +120,20 @@ app.get('/update', function (req, res) {
     let newMovie = new mongoModel(movie);
     newMovie.save();
   })
+});
+
+app.post('/output', (req, res) => {
+  // Write the JSON data to another file
+  fs.writeFile('output.json', JSON.stringify(resultList, null, 2), (err) => {
+    if (err) {
+        console.error('Error writing the file:', err);
+        return;
+    }
+    console.log('File has been written successfully');
+    res.json({
+      message: "Successfully"
+    })
+  });
 })
 
 app.listen(8001, () => {
