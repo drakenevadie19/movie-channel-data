@@ -73,7 +73,7 @@ fs.readFile("./data/filmList.json", 'utf8', (err, data) => {
   if (err) {
     console.log(err);
   } else {
-    console.log("reading file 1 successfully");
+    console.log("reading file 2 successfully");
     let movieList1 = JSON.parse(data);
     movieList1.forEach((movie) => {
       if (!existedName.includes(movie.Title.toLowerCase())) {
@@ -112,17 +112,34 @@ fs.readFile("./data/filmList.json", 'utf8', (err, data) => {
   }
 });
 
+const clearDatabase = async () => {
+  try {
+    const result = await mongoModel.deleteMany({});
+      if (result) {
+          console.log('Movie deleted successfully:', result);
+      } else {
+          console.log('No movie found with this id.');
+      }
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 app.get('/update', function (req, res) {
   // console.log();
   res.send(resultList);
+
+  // Clear MongoDB collection 
+  clearDatabase();
+});
+
+app.get('/output', (req, res) => {
+
   resultList.map((movie) => {
     let newMovie = new mongoModel(movie);
     newMovie.save();
   })
-});
 
-app.post('/output', (req, res) => {
   // Write the JSON data to another file
   fs.writeFile('output.json', JSON.stringify(resultList, null, 2), (err) => {
     if (err) {
